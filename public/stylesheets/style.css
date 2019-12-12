@@ -1,0 +1,25 @@
+pre {
+  word-wrap: break-word;
+  white-space: pre-wrap;
+}
+@import url('http://fonts.googleapis.com/css?family=Open+Sans:200,300');
+body {
+  	font-family: 'Open Sans',Arial,Helvetica,Sans-Serif;
+}
+
+.modal-header-info 
+{
+  color:#fff;
+  padding:9px 15px;
+  border-bottom:1px solid #eee;
+  background-color: #5bc0de;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+}
+h4
+{
+  position: absolute;
+  float: left;
+}

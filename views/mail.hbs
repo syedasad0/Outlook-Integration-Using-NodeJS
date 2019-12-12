@@ -1,0 +1,307 @@
+<div class='container'>
+<div style='float:left'>
+<h2>Inbox</h2>
+</div>
+
+<div style='float:right'>
+<button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal"
+id='com'>Compose</button>
+</div>
+<div class="modal fade" id="myModal" role="dialog">
+<div class="modal-dialog" style='display:block;vertical-align: middle;'>
+<div class="modal-content" style='height:auto;width:1000px;'>
+<div class="modal-header modal-header-info">
+<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+<h4 class="modal-title"><span class="glyphicon glyphicon-envelope"></span> Compose
+Email</h4>
+</div>
+<div class="modal-body">
+<form role="form" class="form-horizontal" id='myForm'>
+<div class="form-group">
+<label class="col-sm-2" for="inputTo"><span class="glyphicon glyphicon-user"></span>From</label>
+<div class="col-sm-10"><input type="email" class="form-control" id="inputFrom" value="Me" disabled>
+</div>
+</div>
+<div class="form-group">
+<label class="col-sm-2" for="inputTo"><span class="glyphicon glyphicon-user"></span>To</label>
+<div class="col-sm-10"><input type="email" class="form-control" id="inputTo"
+placeholder="comma separated list of recipients"></div>
+</div>
+<div class="form-group">
+<label class="col-sm-2" for="inputSubject"><span
+class="glyphicon glyphicon-list-alt"></span>Subject</label>
+<div class="col-sm-10"><input type="text" class="form-control" id="inputSubject" placeholder="subject">
+</div>
+</div>
+<div>
+<label class="col-sm-12" for="inputBody"><span class="glyphicon glyphicon-list"></span>Message</label>
+{{!-- <div id="summernote"></div> --}}
+<textarea class="form-control" type="textarea" name="message" 
+id='inputSub' nmaxlength="6000" rows="7"></textarea>
+</div>
+</form>
+</div>
+<div class="modal-footer">
+<i class="fa fa-paperclip fa-lg" aria-hidden="true" id='upfile1' style='cursor:pointer'></i>
+<input type='file' id='file1' style='display:none'>
+<button type="button" class="btn btn-default pull-left" data-dismiss="modal">Cancel</button>
+<button type="button" class="btn btn-warning pull-left">Save Draft</button>
+<button type="button" class="btn btn-primary " onclick='sendMessage()' data-dismiss="modal">Send<i
+class="fa fa-arrow-circle-right fa-lg" style='margin-left:10px;'></i></button>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="modal fade" id="newModal" role="dialog">
+<div class="modal-dialog">
+<!-- Modal content-->
+<div class="modal-content">
+<div class="modal-header modal-header-info">
+<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+<h4 class="modal-title"><span class="glyphicon glyphicon-envelope"></span> Read Message</h4>
+</div>
+<div class="modal-body" id="openMessage">
+</div>
+<button type="button" class="btn btn-primary" style='margin-bottom:10px;' data-target='#Modal' data-toggle='modal'
+data-dismiss="modal" id='reply1'>Reply</button>
+</div>
+</div>
+</div>
+
+<div class="modal fade" id="Modal" role="dialog">
+<div class="modal-dialog" style='display:block;vertical-align: middle;'>
+<div class="modal-content" style='height:auto;width:1000px;'>
+<div class="modal-header modal-header-info">
+<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+<h4 class="modal-title"><span class="glyphicon glyphicon-envelope"></span> Reply</h4>
+</div>
+<div class="modal-body">
+<form role="form" class="form-horizontal" id='myform'>
+<div class="form-group">
+<label class="col-sm-2" for="inputTo"><span class="glyphicon glyphicon-user"></span>To</label>
+<div class="col-sm-10"><input type="email" class="form-control" id="inputTo" value='To' disabled></div>
+</div>
+<div class="form-group">
+<label class="col-sm-2" for="inputSubject"><span class="glyphicon glyphicon-list-alt"></span>Subject</label>
+<div class="col-sm-10"><input type="text" class="form-control" id="inputSubj" placeholder="subject">
+</div>
+</div>
+<div>
+<label class="col-sm-12" for="inputBody"><span class="glyphicon glyphicon-list"></span>Message</label>
+{{!-- <div id="summernote1"></div> --}}
+<textarea class="form-control" type="textarea" name="message" 
+id='inputBody'nmaxlength="6000" rows="7"></textarea>
+</div>
+</form>
+</div>
+<div class="modal-footer">
+<i class="fa fa-paperclip fa-lg" aria-hidden="true" id='upfile2' style='cursor:pointer'></i>
+<input type='file' style='display:none' id='file2'>
+<button type="button" class="btn btn-default pull-left" data-dismiss="modal">Cancel</button>
+<button type="button" class="btn btn-warning pull-left">Save Draft</button>
+<button type="button" class="btn btn-primary " onclick='Reply()' data-dismiss="modal">Send<i
+class="fa fa-arrow-circle-right fa-lg" style='margin-left:10px;'></i></button>
+</div>
+</div>
+</div>
+</div>
+
+
+<table class="table">
+<thead class="thead-light">
+<th scope="col">From</th>
+<th scope="col">Subject</th>
+<th scope="col">Received</th>
+</thead>
+<tbody>
+{{#each messages}}
+<tr class="{{#unless this.isRead}}table-primary{{/unless}}" id="{{this.id}}" data-toggle="modal"
+data-target="#newModal" onClick="readMessage(this)" style='cursor:pointer'>
+<td title="{{this.from.emailAddress.address}}">{{this.from.emailAddress.name}}</td>
+<td>{{this.subject}}</td>
+<td>{{this.receivedDateTime}}</td>
+</tr>
+{{/each}}
+</tbody>
+</table>
+<script>
+
+$(document).ready(function () {
+var clearStyleButton = function (context) {
+var ui = $.summernote.ui;
+var button = ui.button({
+contents: '<i class="fa fa-eraser"/>',
+tooltip: 'Clear Formatting',
+click: function () {
+var $elements = $(".note-editable").find("*").not("a,img,br,b,u,i");
+for (var i = $elements.length - 1; i >= 0; i--) {
+var e = $elements[i];
+$(e).replaceWith('<div>' + e.innerHTML + '</div>');
+}
+}
+});
+return button.render();
+}
+
+$('#com').click(function () {
+$('#summernote').summernote({
+height: 300,
+minHeight: null,
+maxHeight: null,
+focus: true,
+toolbar:
+[
+['style', ['style']],
+['font', ['fontsize', 'bold', 'italic', 'underline', 'clear', 'strikethrough']],
+['fontname', ['fontname']],
+['color', ['color']],
+['para', ['ul', 'ol', 'paragraph']],
+['height', ['height']],
+['table', ['table']],
+['mybutton', ['clearStyle']],
+['view', ['codeview']],
+['options', ['codeview']],
+['insert', ['link', 'picture', 'video']]
+],
+buttons:
+{
+clearStyle: clearStyleButton
+}
+});
+});
+$('#reply1').click(function () {
+$('#summernote1').summernote({
+height: 300,
+minHeight: null,
+maxHeight: null,
+focus: true,
+toolbar:
+[
+['style', ['style']],
+['font', ['fontsize', 'bold', 'italic', 'underline', 'clear', 'strikethrough']],
+['fontname', ['fontname']],
+['color', ['color']],
+['para', ['ul', 'ol', 'paragraph']],
+['height', ['height']],
+['table', ['table']],
+['mybutton', ['clearStyle']],
+['view', ['codeview']],
+['options', ['codeview']],
+['insert', ['link', 'picture', 'video']]
+],
+buttons:
+{
+clearStyle: clearStyleButton
+}
+});
+});
+});
+
+
+$("#upfile1").click(function () {
+$("#file1").trigger('click');
+});
+
+$("#upfile2").click(function () {
+$("#file2").trigger('click');
+});
+
+
+
+function Reply() {
+var subj = document.getElementById('inputSubj').value;
+var mess = document.getElementById('inputBody').value;
+
+console.log(';;;;;;;;;;;;;;;;;;;;;;;;',messageId)
+
+console.log(mess, subj);
+fetch('/replyMessage', {
+method: 'POST',
+body: JSON.stringify({
+'subject': subj,
+'message': mess,
+'messageId':messageId,
+'toAddress':toAddress
+}),
+headers: {
+"Content-type": "application/json; charset=UTF-8"
+}
+})
+.then(response => response.json())
+.then(json => console.log(json))
+document.getElementById('myform').reset();
+}
+
+
+function sendMessage() {
+var to = document.getElementById('inputTo').value;
+var subject = document.getElementById('inputSubject').value;
+var message = document.getElementById('inputSub').value;
+
+
+fetch('/composeMessage', {
+method: 'POST',
+body: JSON.stringify({
+'to': to,
+'subject': subject,
+'message': message
+}),
+headers: {
+"Content-type": "application/json; charset=UTF-8"
+}
+})
+.then(response => response.json())
+.then(json => console.log(json))
+
+document.getElementById('myForm').reset();
+}
+
+function readMessage(data) {
+messageId = data.id;
+console.log(messageId);
+fetch('/mail/read', {
+method: 'POST',
+body: JSON.stringify({
+'messageId': messageId
+}),
+headers: {
+"Content-type": "application/json; charset=UTF-8"
+}
+})
+.then(response => {
+  Attachment(messageId);
+return response.json()
+})
+.then(json => {
+  console.log(">>>>>>>>>>",json)
+  toAddress=json.senderData.address;
+  console.log('???????????????????????????',toAddress)
+document.getElementById('openMessage').innerHTML = json.data;
+})
+}
+
+function Attachment(messageId)
+{
+  fetch('/getAttachment', {
+method: 'POST',
+body: JSON.stringify({
+'messageId': messageId
+}),
+headers: {
+"Content-type": "application/json; charset=UTF-8"
+}
+})
+.then(response => {
+return response.json()
+})
+.then(json => {
+  console.log('""""""""""""""""""""""""',json)
+})
+}
+
+
+
+
+</script>
