@@ -1,4 +1,3 @@
-// Copyright (c) Microsoft. All rights reserved. Licensed under the MIT license. See LICENSE.txt in the project root for license information.
 var express = require('express');
 var router = express.Router();
 var authHelper = require('../helpers/auth');
@@ -7,7 +6,7 @@ var authHelper = require('../helpers/auth');
 router.get('/', async function(req, res, next) {
   // Get auth code
   const code = req.query.code;
-  console.log("QUERY:: ", req.query);
+  logger.log("QUERY:: ", req.query);
   // If code is present, use it
   if (code) {
     try {
