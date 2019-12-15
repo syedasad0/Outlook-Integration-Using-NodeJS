@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var authHelper = require('../helpers/auth');
 var graph = require('@microsoft/microsoft-graph-client');
+let responses = require('../helpers/responses');
 require('isomorphic-fetch');
 
 router.post('/', async function (req, res, next) {
@@ -60,36 +61,35 @@ router.post('/', async function (req, res, next) {
           //     }
           //   }
           // ],
-          "Attachments": [
+         /*"Attachments": [
             {
               "@odata.type": "#Microsoft.OutlookServices.FileAttachment",
               "Name": "attachment.txt",
               "ContentBytes": "bWFjIGFuZCBjaGVlc2UgdG9kYXk="
             }
-          ]
+          ]*/
         },
         "SaveToSentItems": "true"
       };
       try {
         let response = await client.api("/me/sendMail").post(mailOptions,(err,res)=>{
-          console.log("Message Sent -- ",err,res);
+          logger.log("Message Sent -- ",err,res);
         });
       } catch (error) {
         throw error;
       }
 
     } catch (err) {
-      console.log("Error Occured -- ", err)
+      logger.log("Error Occured -- ", err)
       parms.message = 'Error retrieving messages';
       parms.error = { status: `${err.code}: ${err.message}` };
       parms.debug = JSON.stringify(err.body, null, 2);
       res.render('error', parms);
     }
 
-  res.send("Done")
+    res.send(responses.sendResponse(responses.statusCodes.SUCCESS, responses.responseMessages.SUCCESS, {}))
 
   } else {
-    // Redirect to home
     res.redirect('/');
   }
 
