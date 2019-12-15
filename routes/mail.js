@@ -1,7 +1,7 @@
-// Copyright (c) Microsoft. All rights reserved. Licensed under the MIT license. See LICENSE.txt in the project root for license information.
 var express = require('express');
 var router = express.Router();
 var authHelper = require('../helpers/auth');
+let responses = require('../helpers/responses');
 var graph = require('@microsoft/microsoft-graph-client');
 
 /* GET /mail */
@@ -25,7 +25,7 @@ router.get('/', async function(req, res, next) {
       // Get the 10 newest messages from inbox
       const result = await client
       .api('/me/mailfolders/inbox/messages')
-      .top(10)
+      .top(20)
       .select('subject,from,receivedDateTime,isRead')
       .orderby('receivedDateTime DESC')
       .get();
@@ -65,14 +65,16 @@ router.post('/read', async function(req, res, next) {
     });
 
     try {
-      // Get the 10 newest messages from inbox
       const result = await client
       .api('/me/mailfolders/inbox/messages/'+messageId)
       .get();
 
-      res.json({ data: result.body.content, senderData: result.sender.emailAddress });
+      res.send(responses.sendResponse(responses.statusCodes.SUCCESS, responses.responseMessages.SUCCESS, 
+        {
+          data: result.body.content, senderData: result.sender.emailAddress
+        }));
     } catch (err) {
-      console.log(err)
+      logger.log(err)
       parms.message = 'Error retrieving messages';
       parms.error = { status: `${err.code}: ${err.message}` };
       parms.debug = JSON.stringify(err.body, null, 2);
