@@ -10,6 +10,11 @@ router.post('/', async function (req, res, next) {
   let toEmails = req.body.to;
   let emailSubject = req.body.subject;
   let emailBody = req.body.message;
+  let ContentBytes = req.body.ContentBytes;
+  let fileName = req.body.fileName;
+
+  console.log(req.body);
+
 
   let recipientData = [];
 
@@ -53,27 +58,20 @@ router.post('/', async function (req, res, next) {
             "ContentType": "HTML",
             "Content": emailBody
           },
-          "ToRecipients": recipientData, 
-          // [
-          //   {
-          //     "EmailAddress": {
-          //       "Address": toEmails
-          //     }
-          //   }
-          // ],
-         /*"Attachments": [
+          "ToRecipients": recipientData,
+          "Attachments": [
             {
               "@odata.type": "#Microsoft.OutlookServices.FileAttachment",
-              "Name": "attachment.txt",
-              "ContentBytes": "bWFjIGFuZCBjaGVlc2UgdG9kYXk="
+              "Name": fileName,
+              "ContentBytes": ContentBytes.toString()
             }
-          ]*/
+          ]
         },
         "SaveToSentItems": "true"
       };
       try {
-        let response = await client.api("/me/sendMail").post(mailOptions,(err,res)=>{
-          logger.log("Message Sent -- ",err,res);
+        let response = await client.api("/me/sendMail").post(mailOptions, (err, res) => {
+          logger.log("Message Sent -- ", err, res);
         });
       } catch (error) {
         throw error;
