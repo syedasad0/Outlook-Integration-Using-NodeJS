@@ -149,9 +149,20 @@
       document.getElementById('attachment').innerHTML = '<ul>'
       for (var i = 0; i <= fi.files.length - 1; i++) {
         document.getElementById('attachment').innerHTML += '<li>' + fi.files.item(i).name + '</li>';
+
+
+        var reader = new FileReader();
+        reader.readAsDataURL(fi.files.item(i));
+        reader.onload = function ()
+        {
+        ContentBytes=reader.result;
+        ContentBytes=ContentBytes.match('[^,]*$');
+        console.log(ContentBytes);
+        };
+
         var fsize = fi.files.item(i).size;
         totalFileSize = totalFileSize + fsize;
-        var fileName = fi.files.item(i).name;
+         fileName = fi.files.item(i).name;
         console.log('FileName: ' + fi.files.item(i).name + '   FileSize: ' + totalFileSize +
           '    File Type is: ' + fi.files.item(i).type + "</b>.");
       }
@@ -171,7 +182,6 @@
         .then(json => console.log(':::::::::::::::::::::', json))*/
     }
   }
-
   function getFileRep() {
     fi = document.getElementById('file2'),
       totalFileSize = 0;
@@ -179,7 +189,6 @@
       document.getElementById('attachment1').innerHTML = '<ul>'
       for (var i = 0; i <= fi.files.length - 1; i++) {
         document.getElementById('attachment1').innerHTML += '<li>' + fi.files.item(i).name + '</li>';
-
         var fsize = fi.files.item(i).size;
         totalFileSize = totalFileSize + fsize;
         console.log('FileName: ' + fi.files.item(i).name + '   FileSize: ' + totalFileSize +
@@ -296,7 +305,9 @@
       body: JSON.stringify({
         'to': to,
         'subject': subject,
-        'message': markupStr
+        'message': markupStr,
+        'ContentBytes':ContentBytes,
+        'fileName':fileName
       }),
       headers: {
         "Content-type": "application/json; charset=UTF-8"
@@ -331,7 +342,6 @@
         document.getElementById('openMessage').innerHTML = json.data.data;
       })
   }
-
   function Attachment(messageId) {
     fetch('/getAttachment', {
       method: 'POST',
