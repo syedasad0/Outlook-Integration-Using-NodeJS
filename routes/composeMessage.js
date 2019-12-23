@@ -49,6 +49,8 @@ router.post('/', async function (req, res, next) {
         done(null, accessToken);
       }
     });
+    console.log('#########################client###################', client);
+    console.log('########################Client#################', Client);
 
     try {
       let mailOptions = {

@@ -5,7 +5,7 @@ var favicon = require('serve-favicon');
 var morganLogger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-var base64ToImage = require('base64-to-image');
+//var base64ToImage = require('base64-to-image');
 const mysql = require('mysql');
 const db = require('./helpers/mysqlservices.js');
 require('dotenv').config();
