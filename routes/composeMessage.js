@@ -1,8 +1,8 @@
 var express = require('express');
 var router = express.Router();
 var authHelper = require('../helpers/auth');
-var graph = require('@microsoft/microsoft-graph-client');
 let responses = require('../helpers/responses');
+var graph = require('@microsoft/microsoft-graph-client');
 require('isomorphic-fetch');
 
 router.post('/', async function (req, res, next) {
@@ -10,11 +10,8 @@ router.post('/', async function (req, res, next) {
   let toEmails = req.body.to;
   let emailSubject = req.body.subject;
   let emailBody = req.body.message;
-  let ContentBytes = req.body.ContentBytes;
-  let fileName = req.body.fileName;
-
-  console.log(req.body);
-
+  let fileName=req.body.fileName;
+  let ContentBytes=req.body.ContentBytes
 
   let recipientData = [];
 
@@ -49,8 +46,8 @@ router.post('/', async function (req, res, next) {
         done(null, accessToken);
       }
     });
-    console.log('#########################client###################', client);
-    console.log('########################Client#################', Client);
+    console.log('--------------------------',client);
+    console.log('--------------------------',Client);
 
     try {
       let mailOptions = {
@@ -61,6 +58,13 @@ router.post('/', async function (req, res, next) {
             "Content": emailBody
           },
           "ToRecipients": recipientData,
+          // [
+          //   {
+          //     "EmailAddress": {
+          //       "Address": toEmails
+          //     }
+          //   }
+          // ],
           "Attachments": [
             {
               "@odata.type": "#Microsoft.OutlookServices.FileAttachment",
@@ -73,14 +77,14 @@ router.post('/', async function (req, res, next) {
       };
       try {
         let response = await client.api("/me/sendMail").post(mailOptions, (err, res) => {
-          logger.log("Message Sent -- ", err, res);
+          console.log("Message Sent -- ", err, res);
         });
       } catch (error) {
         throw error;
       }
 
     } catch (err) {
-      logger.log("Error Occured -- ", err)
+      console.log("Error Occured -- ", err)
       parms.message = 'Error retrieving messages';
       parms.error = { status: `${err.code}: ${err.message}` };
       parms.debug = JSON.stringify(err.body, null, 2);
@@ -90,6 +94,7 @@ router.post('/', async function (req, res, next) {
     res.send(responses.sendResponse(responses.statusCodes.SUCCESS, responses.responseMessages.SUCCESS, {}))
 
   } else {
+    // Redirect to home
     res.redirect('/');
   }
 

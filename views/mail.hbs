@@ -18,23 +18,22 @@
         <div class="modal-body">
           <form role="form" class="form-horizontal" id='myForm'>
             <div class="form-group">
-              <label class="col-sm-2" for="inputTo"><span class="glyphicon glyphicon-user"></span>From</label>
+              <label class="col-sm-2" for="inputTo">From</label>
               <div class="col-sm-10"><input type="email" class="form-control" id="inputFrom" value="Me" disabled>
               </div>
             </div>
             <div class="form-group">
-              <label class="col-sm-2" for="inputTo"><span class="glyphicon glyphicon-user"></span>To</label>
+              <label class="col-sm-2" for="inputTo">To</label>
               <div class="col-sm-10"><input type="email" class="form-control" id="inputTo"
                   placeholder="comma separated list of recipients"></div>
             </div>
             <div class="form-group">
-              <label class="col-sm-2" for="inputSubject"><span
-                  class="glyphicon glyphicon-list-alt"></span>Subject</label>
+              <label class="col-sm-2" for="inputSubject">Subject</label>
               <div class="col-sm-10"><input type="text" class="form-control" id="inputSubject" placeholder="subject">
               </div>
             </div>
             <div class='form-group'>
-              <label class="col-sm-12" for="inputBody"><span class="glyphicon glyphicon-list"></span>Message</label>
+              <label class="col-sm-12" for="inputBody">Message</label>
             </div>
             <div>
               <div id="summernote"></div>
@@ -43,14 +42,14 @@
         </div>
 
         <div id='attachment-container'>
-          <p id='attachment' style='margin-left:15px;'></p>
+          <p id='attachment'></p>
         </div>
 
 
 
         <div class="modal-footer">
           <i class="fa fa-paperclip fa-lg" aria-hidden="true" id='upfile1' style='cursor:pointer'></i>
-          <input type='file' id='file1' style='display:inline-block' name="myFiles" onchange='getFile()' multiple>
+          <input type='file' id='file1' style='display:none' name="myFiles" onchange='getFile()' multiple>
           {{!-- selected files: <span id="fileNum">0</span>; total size: <span id="fileSize">0</span> --}}
           <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Cancel</button>
           <button type="button" class="btn btn-warning pull-left">Save Draft</button>
@@ -88,16 +87,16 @@
       <div class="modal-body">
         <form role="form" class="form-horizontal" id='myform'>
           <div class="form-group">
-            <label class="col-sm-2" for="inputTo"><span class="glyphicon glyphicon-user"></span>To</label>
-            <div class="col-sm-10"><input type="email" class="form-control" id="InputTo"></div>
+            <label class="col-sm-2" for="inputTo">To</label>
+            <div class="col-sm-10"><input type="email" class="form-control" id="inputTo"></div>
           </div>
           <div class="form-group">
-            <label class="col-sm-2" for="inputSubject"><span class="glyphicon glyphicon-list-alt"></span>Subject</label>
+            <label class="col-sm-2" for="inputSubject">Subject</label>
             <div class="col-sm-10"><input type="text" class="form-control" id="inputSubj" placeholder="subject">
             </div>
           </div>
           <div class='form-group'>
-            <label class="col-sm-12" for="inputBody"><span class="glyphicon glyphicon-list"></span>Message</label>
+            <label class="col-sm-12" for="inputBody">Message</label>
           </div>
           <div>
             <div id="summernote1"></div>
@@ -107,13 +106,13 @@
 
 
       <div id='attachment-container'>
-        <p id='attachment1' style='margin-left:15px;'></p>
+        <p id='attachment1'></p>
       </div>
 
 
       <div class="modal-footer">
         <i class="fa fa-paperclip fa-lg" aria-hidden="true" id='upfile2' style='cursor:pointer'></i>
-        <input type='file' style='display:inline-block' id='file2' onchange='getFileRep()' multiple>
+        <input type='file' style='display:none' id='file2' onchange='getFileRep()' multiple>
         <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Cancel</button>
         <button type="button" class="btn btn-warning pull-left">Save Draft</button>
         <button type="button" class="btn btn-primary " onclick='Reply()' data-dismiss="modal">Send<i
@@ -142,46 +141,34 @@
   </tbody>
 </table>
 <script>
+
   function getFile() {
-    var fi = document.getElementById('file1');
-    var totalFileSize = 0;
+    fi = document.getElementById('file1'),
+      totalFileSize = 0;
     if (fi.files.length > 0) {
       document.getElementById('attachment').innerHTML = '<ul>'
       for (var i = 0; i <= fi.files.length - 1; i++) {
         document.getElementById('attachment').innerHTML += '<li>' + fi.files.item(i).name + '</li>';
 
-
         var reader = new FileReader();
         reader.readAsDataURL(fi.files.item(i));
-        reader.onload = function ()
+        reader.onload = function () 
         {
-        ContentBytes=reader.result;
-        ContentBytes=ContentBytes.match('[^,]*$');
-        console.log(ContentBytes);
+          contentBytes=reader.result;
+          ContentBytes=contentBytes.match('[^,]*$');
+          console.log(ContentBytes);
         };
-
         var fsize = fi.files.item(i).size;
+        fileName=fi.files.item(i).name;
         totalFileSize = totalFileSize + fsize;
-         fileName = fi.files.item(i).name;
         console.log('FileName: ' + fi.files.item(i).name + '   FileSize: ' + totalFileSize +
           '    File Type is: ' + fi.files.item(i).type + "</b>.");
       }
       document.getElementById('attachment').innerHTML += '</ul>';
-      /*fetch('/addAttachment', {
-        method: 'POST',
-        body: JSON.stringify({
-          'fileName':fileName
-          //'':totalFileSize,
-          //'':fi.files.item(i).typefi.files.item(i).name
-        }),
-        headers: {
-          "Content-type": "application/json; charset=UTF-8"
-        }
-      })
-        .then(response => response.json())
-        .then(json => console.log(':::::::::::::::::::::', json))*/
     }
   }
+
+
   function getFileRep() {
     fi = document.getElementById('file2'),
       totalFileSize = 0;
@@ -189,7 +176,17 @@
       document.getElementById('attachment1').innerHTML = '<ul>'
       for (var i = 0; i <= fi.files.length - 1; i++) {
         document.getElementById('attachment1').innerHTML += '<li>' + fi.files.item(i).name + '</li>';
+
+        var reader = new FileReader();
+        reader.readAsDataURL(fi.files.item(i));
+        reader.onload = function () 
+        {
+          contentBytes=reader.result;
+          ContentBytes=contentBytes.match('[^,]*$');
+          console.log(ContentBytes);
+        };
         var fsize = fi.files.item(i).size;
+        fileName=fi.files.item(i).name;
         totalFileSize = totalFileSize + fsize;
         console.log('FileName: ' + fi.files.item(i).name + '   FileSize: ' + totalFileSize +
           '    File Type is: ' + fi.files.item(i).type + "</b>.");
@@ -197,6 +194,8 @@
       document.getElementById('attachment1').innerHTML += '</ul>';
     }
   }
+
+
   $(document).ready(function () {
     var clearStyleButton = function (context) {
       var ui = $.summernote.ui;
@@ -266,25 +265,29 @@
       });
     });
   });
+
+
   $("#upfile1").click(function () {
     $("#file1").trigger('click');
   });
   $("#upfile2").click(function () {
     $("#file2").trigger('click');
   });
+
+
+
   function Reply() {
-    var To = document.getElementById('InputTo').value;
     var subj = document.getElementById('inputSubj').value;
     var markupSt = $('#summernote1').summernote('code');
-    console.log(markupSt, subj, To);
+    console.log(markupSt, subj);
     fetch('/replyMessage', {
       method: 'POST',
       body: JSON.stringify({
         'subject': subj,
-        'toRecepient': To,
         'message': markupSt,
-        'messageId': messageId
-        }),
+        'messageId': messageId,
+        //'toAddress': toAddress
+      }),
       headers: {
         "Content-type": "application/json; charset=UTF-8"
       }
@@ -295,19 +298,24 @@
     markupSt = null;
     $('#summernote').summernote('code', markupSt);
   }
+
+
+
   function sendMessage() {
     var to = document.getElementById('inputTo').value;
     var subject = document.getElementById('inputSubject').value;
+
     var markupStr = $('#summernote').summernote('code');
     console.log(markupStr);
+
     fetch('/composeMessage', {
       method: 'POST',
       body: JSON.stringify({
         'to': to,
         'subject': subject,
         'message': markupStr,
-        'ContentBytes':ContentBytes,
-        'fileName':fileName
+        'fileName':fileName,
+        'ContentBytes':ContentBytes
       }),
       headers: {
         "Content-type": "application/json; charset=UTF-8"
@@ -315,10 +323,15 @@
     })
       .then(response => response.json())
       .then(json => console.log(json))
+
     document.getElementById('myForm').reset();
     markupStr = null;
     $('#summernote').summernote('code', markupStr);
+
   }
+
+
+
   function readMessage(data) {
     messageId = data.id;
     console.log(messageId);
@@ -332,31 +345,13 @@
       }
     })
       .then(response => {
-        Attachment(messageId);
         return response.json()
       })
       .then(json => {
-        console.log(">>>>>>>>>>", json)
-        toAddress = json.data.senderData.address;
-        console.log('???????????????????????????', toAddress)
-        document.getElementById('openMessage').innerHTML = json.data.data;
-      })
-  }
-  function Attachment(messageId) {
-    fetch('/getAttachment', {
-      method: 'POST',
-      body: JSON.stringify({
-        'messageId': messageId
-      }),
-      headers: {
-        "Content-type": "application/json; charset=UTF-8"
-      }
-    })
-      .then(response => {
-        return response.json()
-      })
-      .then(json => {
-        console.log('""""""""""""""""""""""""', json)
+        //console.log(">>>>>>>>>>", json)
+        //toAddress = json.senderData.address;
+        //console.log('???????????????????????????', toAddress)
+        document.getElementById('openMessage').innerHTML = json.data;
       })
   }
 </script>
